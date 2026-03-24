@@ -8,7 +8,6 @@ namespace warehouse_management_api.Controllers
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
-        // Temporary in-memory list (we will replace with DB later)
         private static List<Product> products = new List<Product>();
 
         [HttpGet]
