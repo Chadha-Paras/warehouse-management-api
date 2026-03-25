@@ -2,6 +2,10 @@
 A secure and scalable REST API built using ASP.NET Core for managing warehouse operations like products, users, and authentication.
 
 ## Features
+- JWT Authentication
+- Product Management
+- Secure APIs
+- ASP.NET Core Web API
 - JWT Authentication & Authorization
 - User Registration & Login
 - Product Management (CRUD)
@@ -10,6 +14,7 @@ A secure and scalable REST API built using ASP.NET Core for managing warehouse o
 - Swagger API Documentation
 
 ## Tech Stack
+- .NET 8
 - ASP.NET Core Web API
 - Entity Framework Core
 - SQL Server
