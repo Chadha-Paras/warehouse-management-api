@@ -18,10 +18,8 @@ A production-style inventory management system built with .NET 8 and SQL Server.
 - SQL Server (Docker)
 - Entity Framework Core
 - Python (Pandas, Requests)
-
-## Data Pipeline
-
-CSV → Python → API → Database
+- JWT (JSON Web Token)
+- Swagger (Swashbuckle)
 
 ## Key Highlights
 
@@ -29,6 +27,18 @@ CSV → Python → API → Database
 - Bulk API optimization
 - Audit fields (CreatedOn, LastChangedOn)
 - Role-based security
+
+## Project Structure
+
+Controllers/      - API endpoints
+Services/         - Business logic
+Repositories/     - Data access layer
+Data/             - DbContext
+DTOs/             - Request/Response models
+
+## Data Pipeline
+
+CSV → Python → API → Database
 
 ## How to Run
 
@@ -38,5 +48,3 @@ CSV → Python → API → Database
 4. Test APIs
 
 ---
-
-💼 Built as a portfolio project for backend engineering roles
