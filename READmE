@@ -1,32 +1,42 @@
 # Warehouse Management API
-A secure and scalable REST API built using ASP.NET Core for managing warehouse operations like products, users, and authentication.
+
+A production-style inventory management system built with .NET 8 and SQL Server.
 
 ## Features
-- JWT Authentication
-- Product Management
-- Secure APIs
-- ASP.NET Core Web API
+
+- Multi-warehouse inventory management
+- Stock transfer system
 - JWT Authentication & Authorization
-- User Registration & Login
-- Product Management (CRUD)
-- Secure endpoints using Bearer Token
-- Entity Framework Core with SQL Server
-- Swagger API Documentation
+- Transaction logging (audit system)
+- Bulk data ingestion via Python
+- Pagination & filtering
+- Clean architecture (Controller → Service → Repository)
 
 ## Tech Stack
-- .NET 8
-- ASP.NET Core Web API
-- Entity Framework Core
-- SQL Server
-- JWT (JSON Web Token)
-- Swagger (Swashbuckle)
 
-## Project Structure
-Controllers/      - API endpoints
-Services/         - Business logic
-Repositories/     - Data access layer
-Data/             - DbContext
-DTOs/             - Request/Response models
+- .NET 8 Web API
+- SQL Server (Docker)
+- Entity Framework Core
+- Python (Pandas, Requests)
+
+## Data Pipeline
+
+CSV → Python → API → Database
+
+## Key Highlights
+
+- Transactional consistency
+- Bulk API optimization
+- Audit fields (CreatedOn, LastChangedOn)
+- Role-based security
 
 ## How to Run
-dotnet run
+
+1. Clone repo
+2. Run `dotnet run`
+3. Open Swagger
+4. Test APIs
+
+---
+
+💼 Built as a portfolio project for backend engineering roles
