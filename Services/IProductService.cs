@@ -1,11 +1,10 @@
-using warehouse_management_api.DTOs;
-using warehouse_management_api.Models;
+using warehouse_management_api.DTOs.Product;
 
-public interface IProductService
+namespace warehouse_management_api.Services
 {
-    Task<List<Product>> GetAllAsync();
-    Task<Product?> GetByIdAsync(int id);
-    Task<Product> CreateAsync(CreateProductDto dto);
-    Task<Product?> UpdateAsync(int id, CreateProductDto dto);
-    Task<bool> DeleteAsync(int id);
+    public interface IProductService
+    {
+        Task<List<ProductResponseDto>> GetAllAsync();
+        Task<ProductResponseDto> CreateAsync(CreateProductDto dto);
+    }
 }

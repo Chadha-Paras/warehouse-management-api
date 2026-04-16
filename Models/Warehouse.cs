@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace warehouse_management_api.Models
-{
-    public class Product: BaseEntity
+{ 
+    public class Warehouse: BaseEntity
     {
         public int Id { get; set; }
 

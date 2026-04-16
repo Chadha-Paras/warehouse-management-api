@@ -1,54 +1,43 @@
-using warehouse_management_api.DTOs;
+using warehouse_management_api.DTOs.Product;
 using warehouse_management_api.Models;
 using warehouse_management_api.Repositories;
 
-public class ProductService : IProductService
+namespace warehouse_management_api.Services
 {
-    private readonly IProductRepository _repo;
-
-    public ProductService(IProductRepository repo)
+    public class ProductService : IProductService
     {
-        _repo = repo;
-    }
+        private readonly IProductRepository _repository;
 
-    public async Task<List<Product>> GetAllAsync()
-    {
-        return await _repo.GetAllAsync();
-    }
-
-    public async Task<Product?> GetByIdAsync(int id)
-    {
-        return await _repo.GetByIdAsync(id);
-    }
-
-    public async Task<Product> CreateAsync(CreateProductDto dto)
-    {
-        var product = new Product
+        public ProductService(IProductRepository repository)
         {
-            Name = dto.Name,
-            Description = dto.Description,
-            Price = dto.Price,
-            StockQuantity = dto.StockQuantity
-        };
+            _repository = repository;
+        }
 
-        return await _repo.CreateAsync(product);
-    }
-
-    public async Task<Product?> UpdateAsync(int id, CreateProductDto dto)
-    {
-        var updatedProduct = new Product
+        public async Task<List<ProductResponseDto>> GetAllAsync()
         {
-            Name = dto.Name,
-            Description = dto.Description,
-            Price = dto.Price,
-            StockQuantity = dto.StockQuantity
-        };
+            var products = await _repository.GetAllAsync();
 
-        return await _repo.UpdateAsync(id, updatedProduct);
-    }
+            return products.Select(p => new ProductResponseDto
+            {
+                Id = p.Id,
+                Name = p.Name
+            }).ToList();
+        }
 
-    public async Task<bool> DeleteAsync(int id)
-    {
-        return await _repo.DeleteAsync(id);
+        public async Task<ProductResponseDto> CreateAsync(CreateProductDto dto)
+        {
+            var product = new Product
+            {
+                Name = dto.Name
+            };
+
+            var created = await _repository.AddAsync(product);
+
+            return new ProductResponseDto
+            {
+                Id = created.Id,
+                Name = created.Name
+            };
+        }
     }
 }

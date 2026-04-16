@@ -1,0 +1,4 @@
+ProductId,WarehouseId,Quantity
+1,1,10
+2,2,5
+99,1,100

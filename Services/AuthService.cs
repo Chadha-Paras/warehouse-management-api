@@ -1,68 +1,78 @@
 using Microsoft.EntityFrameworkCore;
-using warehouse_management_api.Data;
-using warehouse_management_api.Models;
-using warehouse_management_api.DTOs;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.Extensions.Configuration;
+using warehouse_management_api.Data;
+using warehouse_management_api.DTOs.Auth;
+using warehouse_management_api.Models;
 
-
-public class AuthService : IAuthService
+namespace warehouse_management_api.Services
 {
-    private readonly IConfiguration _config;
-    private readonly AppDbContext _context;
+    public class AuthService : IAuthService
+    {
+        private readonly AppDbContext _context;
+        private readonly IConfiguration _config;
 
-    public AuthService(AppDbContext context, IConfiguration config)
-    {
-        _context = context;
-        _config = config;
-    }
-    public async Task<string> Register(RegisterDto dto)
-    {
-        var user = new User
+        public AuthService(AppDbContext context, IConfiguration config)
         {
-            Email = dto.Email,
-            Password = dto.Password // later we hash
-        };
+            _context = context;
+            _config = config;
+        }
 
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
-
-        return "User registered";
-    }
-    public async Task<string?> Login(LoginDto dto)
-    {
-        var user = await _context.Users
-            .FirstOrDefaultAsync(x => x.Email == dto.Email && x.Password == dto.Password);
-
-        if (user == null) return null;
-
-        var claims = new[]
+        public async Task<string> RegisterAsync(RegisterDto dto)
         {
-        new Claim(ClaimTypes.Name, user.Email),
-        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
-    };
+            var exists = await _context.Users.AnyAsync(u => u.Username == dto.Username);
+ 
+            if (exists)
+                throw new Exception("User already exists");
 
-        var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+            var user = new User
+            {
+                Username = dto.Username,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                Role = "User"
+            };
 
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
-        var token = new JwtSecurityToken(
-            issuer: "warehouse-api",
-            audience: "warehouse-users",
-            claims: claims,
-            expires: DateTime.Now.AddHours(2),
-            signingCredentials: creds
-        );
-        //Temporary for debugging the error
-        var keyString = _config["Jwt:Key"];
-        var keyBytes = Encoding.UTF8.GetBytes(keyString);
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
 
-        Console.WriteLine($"KEY: {keyString}");
-        Console.WriteLine($"BYTE LENGTH: {keyBytes.Length}");
+            return "User registered successfully";
+        }
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        public async Task<string> LoginAsync(LoginDto dto)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == dto.Username);
+
+            if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+                throw new Exception("Invalid credentials");
+
+            return GenerateJwtToken(user);
+        }
+
+        private string GenerateJwtToken(User user)
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Role, user.Role)
+            };
+
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_config["Jwt:Key"]!)
+            );
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _config["Jwt:Issuer"],
+                audience: _config["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(2),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
     }
 }

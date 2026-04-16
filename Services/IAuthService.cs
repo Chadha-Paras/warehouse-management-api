@@ -1,5 +1,10 @@
-public interface IAuthService
+using warehouse_management_api.DTOs.Auth;
+
+namespace warehouse_management_api.Services
 {
-    Task<string> Register(RegisterDto dto);
-    Task<string?> Login(LoginDto dto);
+    public interface IAuthService
+    {
+        Task<string> RegisterAsync(RegisterDto dto);
+        Task<string> LoginAsync(LoginDto dto);
+    }
 }

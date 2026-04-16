@@ -1,36 +1,36 @@
 using Microsoft.AspNetCore.Mvc;
-using warehouse_management_api.DTOs;
+using warehouse_management_api.DTOs.Auth;
+using warehouse_management_api.Services;
+using Microsoft.AspNetCore.Authorization;
 
-[ApiController]
-[Route("api/[controller]")]
-public class AuthController : ControllerBase
+namespace warehouse_management_api.Controllers
 {
-    private readonly IAuthService _authService;
-
-    public AuthController(IAuthService authService)
+    [Authorize]
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AuthController : ControllerBase
     {
-        _authService = authService;
-    }
+        private readonly IAuthService _service;
 
-    [HttpPost("register")]
-    public async Task<IActionResult> Register(RegisterDto dto)
-    {
-        var result = await _authService.Register(dto);
-        return Ok(result);
-    }
-
-    [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginDto dto)
-    {
-        var token = await _authService.Login(dto);
-
-        if (token == null)
-            return Unauthorized();
-
-        return Ok(new
+        public AuthController(IAuthService service)
         {
-            token = token,
-            message = "Login successful"
-        });
+            _service = service;
+        }
+
+        [HttpPost("register")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Register(RegisterDto dto)
+        {
+            var result = await _service.RegisterAsync(dto);
+            return Ok(result);
+        }
+
+        [HttpPost("login")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login(LoginDto dto)
+        {
+            var token = await _service.LoginAsync(dto);
+            return Ok(token);
+        }
     }
 }

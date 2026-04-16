@@ -1,6 +1,13 @@
-public class User
+namespace warehouse_management_api.Models
 {
-    public int Id { get; set; }
-    public string Email { get; set; }
-    public string Password { get; set; }
+    public class User: BaseEntity
+    {
+        public int Id { get; set; }
+
+        public string Username { get; set; } = string.Empty;
+
+        public string PasswordHash { get; set; } = string.Empty;
+
+        public string Role { get; set; } = "User"; // Admin / User
+    }
 }
